@@ -1,0 +1,67 @@
+classDiagram
+    direction LR
+
+    class OutputStrategy {
+        <<abstract>>
+        +write(message: str) None
+    }
+
+    class ConsoleStrategy {
+        +write(message: str) None
+    }
+
+    class FileStrategy {
+        -_path: Path
+        +write(message: str) None
+    }
+
+    class UpperFileStrategy {
+        +write(message: str) None
+    }
+
+    class Logger {
+        -_strategy: OutputStrategy
+        +log(level: LogLevel | str, message: str) str
+    }
+
+    class LoggerCreator {
+        <<abstract>>
+        +create_strategy() OutputStrategy
+    }
+
+    class ConsoleLoggerCreator {
+        +create_strategy() OutputStrategy
+    }
+
+    class FileLoggerCreator {
+        -_path: Path
+        +create_strategy() OutputStrategy
+    }
+
+    class UpperFileLoggerCreator {
+        -_path: Path
+        +create_strategy() OutputStrategy
+    }
+
+    class LogLevel {
+        <<enumeration>>
+        TRACE
+        INFO
+        WARN
+        ERROR
+        FATAL
+    }
+
+    OutputStrategy <|.. ConsoleStrategy
+    OutputStrategy <|.. FileStrategy
+    FileStrategy <|-- UpperFileStrategy
+    Logger o-- OutputStrategy
+    Logger ..> LogLevel
+
+    LoggerCreator <|-- ConsoleLoggerCreator
+    LoggerCreator <|-- FileLoggerCreator
+    LoggerCreator <|-- UpperFileLoggerCreator
+
+    ConsoleLoggerCreator ..> ConsoleStrategy : creates
+    FileLoggerCreator ..> FileStrategy : creates
+    UpperFileLoggerCreator ..> UpperFileStrategy : creates
